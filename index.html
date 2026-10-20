@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="挑戰十級小一數學題，每級十題，收集星星，成為數學小勇士！"
+    />
+    <meta name="theme-color" content="#fff8ec" />
+    <title>星星數學小勇士 — 十級星星挑戰</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="question-bank.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="星星數學小勇士首頁">
+          <span class="brand-mark" aria-hidden="true">✦</span>
+          <span>星星數學小勇士</span>
+        </a>
+        <button
+          class="sound-toggle"
+          id="sound-toggle"
+          type="button"
+          aria-pressed="true"
+          aria-label="關閉音效"
+        >
+          <span id="sound-icon" aria-hidden="true">🔊</span>
+          <span id="sound-label">音效開</span>
+        </button>
+      </header>
+
+      <section class="game-card" aria-labelledby="game-title">
+        <div class="sky-decoration sky-decoration-left" aria-hidden="true">✦</div>
+        <div class="sky-decoration sky-decoration-right" aria-hidden="true">✧</div>
+
+        <section class="screen welcome-screen" id="welcome-screen">
+          <div class="hero-illustration" aria-hidden="true">
+            <span class="hero-cloud cloud-left">✦</span>
+            <span class="hero-star">★</span>
+            <span class="hero-cloud cloud-right">✧</span>
+            <span class="hero-spark spark-one">·</span>
+            <span class="hero-spark spark-two">·</span>
+          </div>
+          <p class="eyebrow">一年級・第一學期</p>
+          <h1 id="game-title">星星數學<br class="mobile-break" />小勇士</h1>
+          <p class="intro">
+            準備好接受十級挑戰了嗎？<br />
+            每級十題，答對一題就能收集一粒星星！
+          </p>
+
+          <div class="challenge-preview" aria-label="共有十級，每級十題，答對一題得一粒星星">
+            <div class="preview-item">
+              <span class="preview-icon" aria-hidden="true">🧩</span>
+              <strong>10</strong>
+              <span>道題目</span>
+            </div>
+            <span class="preview-divider" aria-hidden="true"></span>
+            <div class="preview-item">
+              <span class="preview-icon star-icon" aria-hidden="true">★</span>
+              <strong>10</strong>
+              <span>粒星星</span>
+            </div>
+            <span class="preview-divider" aria-hidden="true"></span>
+            <div class="preview-item">
+              <span class="preview-icon" aria-hidden="true">🎉</span>
+              <strong>GO!</strong>
+              <span>開心挑戰</span>
+            </div>
+          </div>
+
+          <button class="primary-button start-button" id="start-button" type="button">
+            開始挑戰 <span aria-hidden="true">➜</span>
+          </button>
+          <p class="gentle-note">不怕答錯，再試一次就會進步！</p>
+        </section>
+
+        <section
+          class="screen quiz-screen"
+          id="quiz-screen"
+          aria-labelledby="question-text"
+          hidden
+        >
+          <div class="quiz-topline">
+            <span class="level-pill" id="current-level">第 1 級</span>
+            <span class="question-count" id="question-count">第 1 題 <span>/ 10</span></span>
+            <span class="score-pill"><span aria-hidden="true">★</span> <span id="score">0</span> 星</span>
+          </div>
+
+          <div
+            class="progress-track"
+            id="progress-track"
+            role="progressbar"
+            aria-label="答題進度"
+            aria-valuemin="0"
+            aria-valuemax="10"
+            aria-valuenow="0"
+          >
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+
+          <div class="star-board" id="star-board" aria-label="已獲得 0 粒星星">
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+            <span class="board-star" aria-hidden="true">★</span>
+          </div>
+
+          <div class="question-area" aria-live="polite">
+            <span class="topic-tag" id="topic-tag">加法小高手</span>
+            <h2 id="question-text">6 + 3 = ?</h2>
+            <p class="question-hint" id="question-hint">選出正確的答案吧！</p>
+            <div class="question-illustration" id="question-illustration" hidden></div>
+          </div>
+
+          <div class="answer-grid" id="answer-grid" aria-label="答案選項"></div>
+          <div class="feedback" id="feedback" aria-live="assertive"></div>
+          <button class="primary-button next-button" id="next-button" type="button" hidden>
+            下一題 <span aria-hidden="true">➜</span>
+          </button>
+        </section>
+
+        <section
+          class="screen result-screen"
+          id="result-screen"
+          aria-labelledby="result-title"
+          hidden
+        >
+          <div class="result-confetti" aria-hidden="true">✦　✧　★　✧　✦</div>
+          <div class="result-medal" id="result-medal" aria-hidden="true">🏆</div>
+          <p class="eyebrow" id="result-level">第 1 級完成！</p>
+          <h2 id="result-title">你做到了！</h2>
+          <p class="result-message" id="result-message">你是閃亮的數學小勇士！</p>
+          <div class="final-score" aria-live="polite">
+            <span class="final-star" aria-hidden="true">★</span>
+            <span id="final-score">0</span>
+            <span class="score-out-of">/ 10</span>
+          </div>
+          <p class="result-caption">你收集到的星星</p>
+          <button class="primary-button next-level-button" id="next-level-button" type="button" hidden>
+            挑戰下一級 <span aria-hidden="true">➜</span>
+          </button>
+          <button class="secondary-button play-again-button" id="play-again-button" type="button">
+            再玩本級 <span aria-hidden="true">↻</span>
+          </button>
+        </section>
+      </section>
+
+      <footer class="page-footer">
+        <span>一步一步來，你已經很棒了！</span>
+        <span aria-hidden="true">✿</span>
+      </footer>
+    </main>
+  </body>
+</html>
