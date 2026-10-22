@@ -6,6 +6,7 @@ const subjectTitle = document.getElementById("subject-title");
 const mathSubjectButton = document.getElementById("math-subject-button");
 const chineseSubjectButton = document.getElementById("chinese-subject-button");
 const englishSubjectButton = document.getElementById("english-subject-button");
+const scienceSubjectButton = document.getElementById("science-subject-button");
 const subjectMenuButton = document.getElementById("subject-menu-button");
 const gameTitle = document.getElementById("game-title");
 const subjectBankNote = document.getElementById("subject-bank-note");
@@ -53,7 +54,7 @@ let currentQuestionIndex = 0;
 let score = 0;
 let currentLevel = 1;
 let currentSubject = "math";
-const subjectNames = { math: "數學", chinese: "中文", english: "英文" };
+const subjectNames = { math: "數學", chinese: "中文", english: "英文", science: "科學" };
 const usedQuestionKeys = new Set();
 let soundEnabled = true;
 let audioContext;
@@ -69,7 +70,9 @@ function shuffle(items) {
 
 function createQuestionPool() {
   if (currentSubject !== "math") {
-    const bank = window.LANGUAGE_QUESTION_BANKS[currentSubject];
+    const bank = currentSubject === "science"
+      ? window.SCIENCE_QUESTION_BANK
+      : window.LANGUAGE_QUESTION_BANKS[currentSubject];
     const fresh = shuffle(bank.filter((question) => !usedQuestionKeys.has(questionKey(question))));
     const used = shuffle(bank.filter((question) => usedQuestionKeys.has(questionKey(question))));
     const pool = [...fresh, ...used].slice(0, QUESTION_COUNT);
@@ -163,7 +166,7 @@ function renderQuestion() {
   questionText.textContent = question.prompt;
   questionHint.textContent =
     `${question.source}${["A", "B", "C"].includes(question.source) ? " 冊" : ""}・第 ${question.page} 頁・第 ${question.number} 題`;
-  questionText.lang = currentSubject === "english" ? "en" : "zh-Hant";
+  questionText.lang = ["english", "science"].includes(currentSubject) ? "en" : "zh-Hant";
   questionPassage.lang = questionText.lang;
   questionPassage.textContent = question.passage || "";
   questionPassage.hidden = !question.passage;
@@ -494,13 +497,15 @@ function selectSubject(subject) {
   currentLevel = 1;
   usedQuestionKeys.clear();
   gameTitle.textContent = `星星${subjectNames[subject]}小勇士`;
-  vocabularyButton.hidden = subject === "math";
+  vocabularyButton.hidden = !["chinese", "english"].includes(subject);
   subjectBankNote.hidden = subject === "math";
   subjectBankNote.textContent = subject === "chinese"
     ? `現有 ${window.LANGUAGE_QUESTION_BANKS.chinese.length} 題（含 3 道原卷例題），優先抽未做過的題目。語基工作紙答案依批改內容，其餘依題意整理。`
     : subject === "english"
       ? "現有 20 道原卷題目，優先抽取未做過的題目，用完後重用。"
-      : "";
+      : subject === "science"
+        ? "現有 10 道英文科學小題（含配對／圈選拆題），每級重新排序。竹的配對描述已修正原卷科學用語。"
+        : "";
   showScreen(welcomeScreen);
   startButton.focus();
 }
@@ -554,6 +559,7 @@ vocabularyBackButton.addEventListener("click", () => {
 mathSubjectButton.addEventListener("click", () => selectSubject("math"));
 chineseSubjectButton.addEventListener("click", () => selectSubject("chinese"));
 englishSubjectButton.addEventListener("click", () => selectSubject("english"));
+scienceSubjectButton.addEventListener("click", () => selectSubject("science"));
 resultMenuButton.addEventListener("click", () => {
   showScreen(subjectScreen);
   subjectTitle.focus();

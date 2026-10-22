@@ -44,7 +44,7 @@ function loadGame() {
       createElement: () => new Element(),
     },
   });
-  for (const file of ["question-bank.js", "math-additional-bank.js", "language-question-bank.js", "chinese-vocabulary.js", "english-vocabulary.js", "app.js"]) {
+  for (const file of ["question-bank.js", "math-additional-bank.js", "language-question-bank.js", "science-question-bank.js", "chinese-vocabulary.js", "english-vocabulary.js", "app.js"]) {
     vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context);
   }
   return { context, elements, run: (code) => vm.runInContext(code, context) };
@@ -212,4 +212,39 @@ test("English vocabulary shows all three original lists and does not mix with Ch
   elements["english-subject-button"].click();
   elements["vocabulary-button"].click();
   assert.equal(elements["vocabulary-list"].children.length, 3);
+});
+
+test("science uses its own source questions, images and ten-level progression", () => {
+  const { elements, run } = loadGame();
+  const bank = run("window.SCIENCE_QUESTION_BANK");
+  assert.equal(bank.length, 10);
+  elements["science-subject-button"].click();
+  assert.equal(elements["welcome-screen"].hidden, false);
+  assert.equal(elements["vocabulary-button"].hidden, true);
+  assert.equal(elements["game-title"].textContent, "星星科學小勇士");
+  elements["start-button"].click();
+  for (let level = 1; level <= 10; level += 1) {
+    const questions = run("questions");
+    assert.equal(questions.length, 10);
+    assert.equal(new Set(questions.map((q) => q.number)).size, 10);
+    for (const question of questions) {
+      assert.equal(question.source, "考試科學.pdf");
+      assert.equal(elements["question-text"].lang, "en");
+      assert.equal(elements["question-illustration"].hidden, !question.image);
+      if (question.image) {
+        assert.ok(fs.existsSync(path.join(root, question.image)));
+        assert.equal(elements["question-illustration"].children[0].src, question.image);
+      }
+      const button = elements["answer-grid"].children.find((b) => b.dataset.answer === question.answer);
+      assert.ok(button);
+      button.click();
+      elements["next-button"].click();
+    }
+    assert.equal(elements["final-score"].textContent, "10");
+    assert.equal(elements["next-level-button"].hidden, level === 10);
+    if (level < 10) elements["next-level-button"].click();
+  }
+  assert.ok(elements["result-message"].textContent.includes("科學小勇士"));
+  elements["result-menu-button"].click();
+  assert.equal(elements["subject-screen"].hidden, false);
 });

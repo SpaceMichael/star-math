@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="選擇中文、英文或數學，開始星星學習挑戰！每級十題，收集星星。"
+      content="選擇中文、英文、數學或科學，開始星星學習挑戰！每級十題，收集星星。"
     />
     <meta name="theme-color" content="#fff8ec" />
     <title>星星學習小勇士 — 科目選單</title>
@@ -13,6 +13,7 @@
     <script src="question-bank.js" defer></script>
     <script src="math-additional-bank.js" defer></script>
     <script src="language-question-bank.js" defer></script>
+    <script src="science-question-bank.js" defer></script>
     <script src="chinese-vocabulary.js" defer></script>
     <script src="english-vocabulary.js" defer></script>
     <script src="app.js" defer></script>
@@ -60,10 +61,10 @@
               <strong>數學</strong>
               <span class="subject-status">開始挑戰 ➜</span>
             </button>
-            <button class="subject-button" type="button" disabled>
+            <button class="subject-button subject-button-ready" id="science-subject-button" type="button">
               <span class="subject-icon" aria-hidden="true">🔬</span>
               <strong>科學</strong>
-              <span class="subject-status">即將推出</span>
+              <span class="subject-status">開始挑戰 ➜</span>
             </button>
             <button class="subject-button" type="button" disabled>
               <span class="subject-icon" aria-hidden="true">🌏</span>
