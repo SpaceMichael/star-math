@@ -1,6 +1,24 @@
 const QUESTION_COUNT = 10;
 const MAX_LEVEL = 10;
 
+const subjectScreen = document.getElementById("subject-screen");
+const subjectTitle = document.getElementById("subject-title");
+const mathSubjectButton = document.getElementById("math-subject-button");
+const chineseSubjectButton = document.getElementById("chinese-subject-button");
+const englishSubjectButton = document.getElementById("english-subject-button");
+const subjectMenuButton = document.getElementById("subject-menu-button");
+const gameTitle = document.getElementById("game-title");
+const subjectBankNote = document.getElementById("subject-bank-note");
+const questionPassage = document.getElementById("question-passage");
+const resultMenuButton = document.getElementById("result-menu-button");
+const vocabularyButton = document.getElementById("vocabulary-button");
+const vocabularyScreen = document.getElementById("vocabulary-screen");
+const vocabularyTitle = document.getElementById("vocabulary-title");
+const vocabularySubtitle = document.getElementById("vocabulary-subtitle");
+const vocabularySummary = document.getElementById("vocabulary-summary");
+const vocabularySource = document.getElementById("vocabulary-source");
+const vocabularyList = document.getElementById("vocabulary-list");
+const vocabularyBackButton = document.getElementById("vocabulary-back-button");
 const welcomeScreen = document.getElementById("welcome-screen");
 const quizScreen = document.getElementById("quiz-screen");
 const resultScreen = document.getElementById("result-screen");
@@ -34,6 +52,8 @@ let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
 let currentLevel = 1;
+let currentSubject = "math";
+const subjectNames = { math: "數學", chinese: "中文", english: "英文" };
 const usedQuestionKeys = new Set();
 let soundEnabled = true;
 let audioContext;
@@ -48,6 +68,14 @@ function shuffle(items) {
 }
 
 function createQuestionPool() {
+  if (currentSubject !== "math") {
+    const bank = window.LANGUAGE_QUESTION_BANKS[currentSubject];
+    const fresh = shuffle(bank.filter((question) => !usedQuestionKeys.has(questionKey(question))));
+    const used = shuffle(bank.filter((question) => usedQuestionKeys.has(questionKey(question))));
+    const pool = [...fresh, ...used].slice(0, QUESTION_COUNT);
+    pool.forEach((question) => usedQuestionKeys.add(questionKey(question)));
+    return pool.map((question) => ({ ...question, options: shuffle(question.options) }));
+  }
   const topicGroups = [
     ["順數和倒數"],
     ["奇數和偶數"],
@@ -117,7 +145,7 @@ function updateStars() {
 }
 
 function showScreen(screenToShow) {
-  [welcomeScreen, quizScreen, resultScreen].forEach((screen) => {
+  [subjectScreen, welcomeScreen, quizScreen, resultScreen, vocabularyScreen].forEach((screen) => {
     screen.hidden = screen !== screenToShow;
   });
 }
@@ -133,7 +161,12 @@ function renderQuestion() {
   questionCount.innerHTML = `第 ${currentQuestionIndex + 1} 題 <span>/ ${QUESTION_COUNT}</span>`;
   topicTag.textContent = question.topic;
   questionText.textContent = question.prompt;
-  questionHint.textContent = `${question.source} 冊・第 ${question.page} 頁・第 ${question.number} 題`;
+  questionHint.textContent =
+    `${question.source}${["A", "B", "C"].includes(question.source) ? " 冊" : ""}・第 ${question.page} 頁・第 ${question.number} 題`;
+  questionText.lang = currentSubject === "english" ? "en" : "zh-Hant";
+  questionPassage.lang = questionText.lang;
+  questionPassage.textContent = question.passage || "";
+  questionPassage.hidden = !question.passage;
   renderQuestionIllustration(question);
   feedback.textContent = "";
   feedback.classList.remove("wrong");
@@ -159,6 +192,17 @@ function renderQuestion() {
 function renderQuestionIllustration(question) {
   questionIllustration.replaceChildren();
   questionIllustration.hidden = true;
+
+  if (question.image) {
+    const image = document.createElement("img");
+    image.className = "question-source-image";
+    image.src = question.image;
+    image.alt = question.imageAlt;
+    image.draggable = false;
+    questionIllustration.append(image);
+    questionIllustration.hidden = false;
+    return;
+  }
 
   if (question.illustration === "c-page6-student-queue") {
     renderStudentQueueIllustration(question);
@@ -283,6 +327,9 @@ function chooseAnswer(selectedButton, question) {
     questionHint.textContent = "不用怕，記住這個小知識！";
     playGentleSound();
   }
+  if (question.explanation) {
+    feedback.textContent += ` ${question.explanation}`;
+  }
 
   updateStars();
   updateProgress(currentQuestionIndex + 1);
@@ -309,7 +356,7 @@ function showResults() {
 
   if (currentLevel === MAX_LEVEL) {
     resultTitle.textContent = "恭喜完成全部 10 級！";
-    resultMessage.textContent = "十級挑戰全數完成，你是數學小勇士！";
+    resultMessage.textContent = `十級挑戰全數完成，你是${subjectNames[currentSubject]}小勇士！`;
     resultMedal.textContent = "🏆";
   } else if (score === QUESTION_COUNT) {
     resultTitle.textContent = "滿分！太厲害了！";
@@ -317,7 +364,7 @@ function showResults() {
     resultMedal.textContent = "🏆";
   } else if (score >= 7) {
     resultTitle.textContent = "你做到了！";
-    resultMessage.textContent = "你的數學星星閃閃發亮！";
+    resultMessage.textContent = `你的${subjectNames[currentSubject]}星星閃閃發亮！`;
     resultMedal.textContent = "🌟";
   } else if (score >= 4) {
     resultTitle.textContent = "好棒的挑戰！";
@@ -442,6 +489,79 @@ function toggleSound() {
   soundLabel.textContent = soundEnabled ? "音效開" : "音效關";
 }
 
+function selectSubject(subject) {
+  currentSubject = subject;
+  currentLevel = 1;
+  usedQuestionKeys.clear();
+  gameTitle.textContent = `星星${subjectNames[subject]}小勇士`;
+  vocabularyButton.hidden = subject === "math";
+  subjectBankNote.hidden = subject === "math";
+  subjectBankNote.textContent = subject === "chinese"
+    ? `現有 ${window.LANGUAGE_QUESTION_BANKS.chinese.length} 題（含 3 道原卷例題），優先抽未做過的題目。語基工作紙答案依批改內容，其餘依題意整理。`
+    : subject === "english"
+      ? "現有 20 道原卷題目，優先抽取未做過的題目，用完後重用。"
+      : "";
+  showScreen(welcomeScreen);
+  startButton.focus();
+}
+
+vocabularyButton.addEventListener("click", () => {
+  const isEnglish = currentSubject === "english";
+  const lessons = isEnglish ? window.ENGLISH_VOCABULARY : window.CHINESE_VOCABULARY;
+  vocabularyTitle.textContent = `${subjectNames[currentSubject]}生字表`;
+  vocabularySubtitle.textContent = isEnglish
+    ? "英文・Read, Sound, Write, Check"
+    : "中文・2026–2027 年度第一段考";
+  const wordCount = lessons.reduce((total, lesson) => total + lesson.words.length, 0);
+  vocabularySummary.textContent = isEnglish
+    ? `三份生字表，共 ${wordCount} 個字詞。保留原表英式拼法 colours、grey。`
+    : `第 1、3、4、5 課，共 ${wordCount} 個字詞`;
+  vocabularySource.textContent = isEnglish
+    ? "來源：各組所列 PDF・第 1 頁"
+    : "來源：中文重詞表_26_27.pdf・第 1 頁";
+  vocabularyBackButton.textContent = `返回${subjectNames[currentSubject]}`;
+  vocabularyList.lang = isEnglish ? "en" : "zh-Hant";
+  vocabularyList.replaceChildren();
+  lessons.forEach((lesson) => {
+    const section = document.createElement("section");
+    section.className = "vocabulary-lesson";
+    const heading = document.createElement("h2");
+    heading.textContent = lesson.lesson;
+    const list = document.createElement("ul");
+    list.className = "vocabulary-words";
+    lesson.words.forEach((word) => {
+      const item = document.createElement("li");
+      item.textContent = word;
+      list.append(item);
+    });
+    section.append(heading, list);
+    if (lesson.source) {
+      const source = document.createElement("p");
+      source.className = "question-hint";
+      source.textContent = lesson.source;
+      section.append(source);
+    }
+    vocabularyList.append(section);
+  });
+  showScreen(vocabularyScreen);
+  vocabularyTitle.focus();
+});
+vocabularyBackButton.addEventListener("click", () => {
+  showScreen(welcomeScreen);
+  vocabularyButton.focus();
+});
+
+mathSubjectButton.addEventListener("click", () => selectSubject("math"));
+chineseSubjectButton.addEventListener("click", () => selectSubject("chinese"));
+englishSubjectButton.addEventListener("click", () => selectSubject("english"));
+resultMenuButton.addEventListener("click", () => {
+  showScreen(subjectScreen);
+  subjectTitle.focus();
+});
+subjectMenuButton.addEventListener("click", () => {
+  showScreen(subjectScreen);
+  subjectTitle.focus();
+});
 startButton.addEventListener("click", startChallenge);
 playAgainButton.addEventListener("click", startChallenge);
 nextLevelButton.addEventListener("click", startNextLevel);

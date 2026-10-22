@@ -5,20 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="挑戰十級小一數學題，每級十題，收集星星，成為數學小勇士！"
+      content="選擇中文、英文或數學，開始星星學習挑戰！每級十題，收集星星。"
     />
     <meta name="theme-color" content="#fff8ec" />
-    <title>星星數學小勇士 — 十級星星挑戰</title>
+    <title>星星學習小勇士 — 科目選單</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="question-bank.js" defer></script>
+    <script src="math-additional-bank.js" defer></script>
+    <script src="language-question-bank.js" defer></script>
+    <script src="chinese-vocabulary.js" defer></script>
+    <script src="english-vocabulary.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
     <main class="app-shell">
       <header class="topbar">
-        <a class="brand" href="#" aria-label="星星數學小勇士首頁">
+        <a class="brand" href="#" aria-label="星星學習小勇士">
           <span class="brand-mark" aria-hidden="true">✦</span>
-          <span>星星數學小勇士</span>
+          <span>星星學習小勇士</span>
         </a>
         <button
           class="sound-toggle"
@@ -32,11 +36,44 @@
         </button>
       </header>
 
-      <section class="game-card" aria-labelledby="game-title">
+      <section class="game-card" aria-label="星星學習挑戰">
         <div class="sky-decoration sky-decoration-left" aria-hidden="true">✦</div>
         <div class="sky-decoration sky-decoration-right" aria-hidden="true">✧</div>
 
-        <section class="screen welcome-screen" id="welcome-screen">
+        <section class="screen subject-screen" id="subject-screen" aria-labelledby="subject-title">
+          <p class="eyebrow">一起探索・快樂學習</p>
+          <h1 id="subject-title" tabindex="-1">今天想學甚麼？</h1>
+          <p class="intro">選一個科目，開始你的星星挑戰！</p>
+          <div class="subject-grid" aria-label="科目選單">
+            <button class="subject-button subject-button-ready" id="chinese-subject-button" type="button">
+              <span class="subject-icon" aria-hidden="true">📖</span>
+              <strong>中文</strong>
+              <span class="subject-status">開始挑戰 ➜</span>
+            </button>
+            <button class="subject-button subject-button-ready" id="english-subject-button" type="button">
+              <span class="subject-icon" aria-hidden="true">🔤</span>
+              <strong>英文</strong>
+              <span class="subject-status">開始挑戰 ➜</span>
+            </button>
+            <button class="subject-button subject-button-ready" id="math-subject-button" type="button">
+              <span class="subject-icon" aria-hidden="true">🧮</span>
+              <strong>數學</strong>
+              <span class="subject-status">開始挑戰 ➜</span>
+            </button>
+            <button class="subject-button" type="button" disabled>
+              <span class="subject-icon" aria-hidden="true">🔬</span>
+              <strong>科學</strong>
+              <span class="subject-status">即將推出</span>
+            </button>
+            <button class="subject-button" type="button" disabled>
+              <span class="subject-icon" aria-hidden="true">🌏</span>
+              <strong>人文</strong>
+              <span class="subject-status">即將推出</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="screen welcome-screen" id="welcome-screen" hidden>
           <div class="hero-illustration" aria-hidden="true">
             <span class="hero-cloud cloud-left">✦</span>
             <span class="hero-star">★</span>
@@ -50,6 +87,7 @@
             準備好接受十級挑戰了嗎？<br />
             每級十題，答對一題就能收集一粒星星！
           </p>
+          <p class="gentle-note subject-bank-note" id="subject-bank-note" hidden></p>
 
           <div class="challenge-preview" aria-label="共有十級，每級十題，答對一題得一粒星星">
             <div class="preview-item">
@@ -75,6 +113,17 @@
             開始挑戰 <span aria-hidden="true">➜</span>
           </button>
           <p class="gentle-note">不怕答錯，再試一次就會進步！</p>
+          <button class="secondary-button" id="vocabulary-button" type="button" hidden>生字表</button>
+          <button class="secondary-button" id="subject-menu-button" type="button">返回科目選單</button>
+        </section>
+
+        <section class="screen vocabulary-screen" id="vocabulary-screen" aria-labelledby="vocabulary-title" hidden>
+          <p class="eyebrow" id="vocabulary-subtitle">中文・2026–2027 年度第一段考</p>
+          <h1 id="vocabulary-title" tabindex="-1">中文生字表</h1>
+          <p class="intro" id="vocabulary-summary">第 1、3、4、5 課，共 37 個字詞</p>
+          <div id="vocabulary-list"></div>
+          <p class="question-hint" id="vocabulary-source">來源：中文重詞表_26_27.pdf・第 1 頁</p>
+          <button class="secondary-button" id="vocabulary-back-button" type="button">返回中文</button>
         </section>
 
         <section
@@ -118,6 +167,7 @@
             <span class="topic-tag" id="topic-tag">加法小高手</span>
             <h2 id="question-text">6 + 3 = ?</h2>
             <p class="question-hint" id="question-hint">選出正確的答案吧！</p>
+            <p class="question-passage" id="question-passage" hidden></p>
             <div class="question-illustration" id="question-illustration" hidden></div>
           </div>
 
@@ -151,6 +201,7 @@
           <button class="secondary-button play-again-button" id="play-again-button" type="button">
             再玩本級 <span aria-hidden="true">↻</span>
           </button>
+          <button class="secondary-button" id="result-menu-button" type="button">返回科目選單</button>
         </section>
       </section>
 

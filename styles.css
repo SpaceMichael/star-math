@@ -139,6 +139,100 @@ button {
   align-items: center;
 }
 
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#vocabulary-button,
+#vocabulary-back-button {
+  margin: 14px 0;
+}
+
+.vocabulary-lesson {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #eee8df;
+  border-radius: 16px;
+  background: #fffaf1;
+  text-align: left;
+}
+
+.vocabulary-lesson h2 {
+  font-size: 21px;
+}
+
+.vocabulary-words {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vocabulary-words li {
+  padding: 8px 2px;
+  border-radius: 10px;
+  background: white;
+  font-size: clamp(18px, 4vw, 25px);
+  text-align: center;
+}
+
+.vocabulary-words:lang(en) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.vocabulary-words:lang(en) li {
+  font-size: clamp(17px, 4vw, 25px);
+  overflow-wrap: anywhere;
+}
+
+.subject-button {
+  display: flex;
+  min-height: 126px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 14px 8px;
+  border: 2px solid #eee8df;
+  border-radius: 18px;
+  background: #faf7f2;
+  color: #777784;
+}
+
+.subject-button strong {
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.subject-icon {
+  font-size: 29px;
+}
+
+.subject-status {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.subject-button-ready {
+  border-color: #f1bc5c;
+  background: #fff4d5;
+  color: #75500b;
+  cursor: pointer;
+}
+
+.subject-button-ready:hover {
+  border-color: #dfaa21;
+  background: #ffedbb;
+}
+
+.subject-button:disabled {
+  cursor: not-allowed;
+}
+
 .hero-illustration {
   position: relative;
   display: grid;
@@ -303,6 +397,8 @@ h1 {
 }
 
 .primary-button:focus-visible,
+.secondary-button:focus-visible,
+.subject-button:focus-visible,
 .sound-toggle:focus-visible,
 .answer-button:focus-visible {
   outline: 3px solid #8c7cdb;
@@ -442,6 +538,32 @@ h1 {
   font-weight: 600;
 }
 
+.question-passage {
+  margin: 16px 0 0;
+  padding: 16px;
+  border: 1px solid #eee8df;
+  border-radius: 14px;
+  background: white;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.8;
+  text-align: left;
+  white-space: pre-line;
+}
+
+.subject-bank-note {
+  margin: 0 0 16px;
+  line-height: 1.7;
+}
+
+.question-area h2:lang(en) {
+  font-size: clamp(23px, 4.5vw, 32px);
+}
+
+#result-menu-button {
+  margin-top: 14px;
+}
+
 .question-illustration {
   width: 100%;
   margin-top: 19px;
@@ -455,6 +577,13 @@ h1 {
   position: relative;
   width: 100%;
   background: white;
+}
+
+.question-source-image {
+  display: block;
+  width: min(100%, 260px);
+  height: auto;
+  margin: 0 auto;
 }
 
 .shared-illustration img {
